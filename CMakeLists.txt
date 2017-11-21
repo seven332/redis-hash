@@ -9,9 +9,6 @@ set(SOURCE_FILES
         dict.h
         zmalloc.c
         zmalloc.h
-        sds.c
-        sds.h
-        sdsalloc.h
         siphash.c
         atomicvar.h
         config.h
