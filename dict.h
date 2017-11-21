@@ -45,6 +45,7 @@
 #define DICT_NOTUSED(V) ((void) V)
 
 typedef struct dictEntry {
+    int size;
     void *key;
     union {
         void *val;
@@ -54,6 +55,11 @@ typedef struct dictEntry {
     } v;
     struct dictEntry *next;
 } dictEntry;
+
+typedef struct dictBucket {
+    dictEntry *entry;
+    unsigned long size;
+} dictBucket;
 
 typedef struct dictType {
     uint64_t (*hashFunction)(const void *key);
@@ -67,7 +73,7 @@ typedef struct dictType {
 /* This is our hash table structure. Every dictionary has two of this as we
  * implement incremental rehashing, for the old to the new table. */
 typedef struct dictht {
-    dictEntry **table;
+    dictBucket *table;
     unsigned long size;
     unsigned long sizemask;
     unsigned long used;
@@ -146,6 +152,8 @@ typedef void (dictScanBucketFunction)(void *privdata, dictEntry **bucketref);
 #define dictSlots(d) ((d)->ht[0].size+(d)->ht[1].size)
 #define dictSize(d) ((d)->ht[0].used+(d)->ht[1].used)
 #define dictIsRehashing(d) ((d)->rehashidx != -1)
+
+int dictCheckBucketSize(dict *d);
 
 /* API */
 dict *dictCreate(dictType *type, void *privDataPtr);
