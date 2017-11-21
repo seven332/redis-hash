@@ -679,6 +679,43 @@ dictEntry *dictGetRandomKey(dict *d)
     return he;
 }
 
+
+dictEntry *_dicGetEntryAt(dictEntry *entry, int index)
+{
+    if (entry == NULL) return NULL;
+    while (index-- && (entry = entry->next) != NULL);
+    return entry;
+}
+
+dictEntry *dictGetRandomKey2(dict *d)
+{
+    unsigned long dictSize;
+    unsigned long bucketSize;
+    int index;
+    int table;
+    int i;
+    dictEntry *entry;
+
+    dictSize = dictSize(d);
+    if (dictSize(d) == 0) return NULL;
+    if (dictIsRehashing(d)) _dictRehashStep(d);
+
+    index = random() % dictSize;
+    for (table = 0; table <= 1; table++) {
+        for (i = 0; i < d->ht[table].size; i++) {
+            bucketSize = d->ht[table].table[i].size;
+            if (bucketSize <= index) {
+                index -= bucketSize;
+            } else {
+                entry = d->ht[table].table[i].entry;
+                return _dicGetEntryAt(entry, index);
+            }
+        }
+    }
+
+    return NULL;
+}
+
 /* This function samples the dictionary to return a few keys from random
  * locations.
  *

@@ -154,6 +154,7 @@ typedef void (dictScanBucketFunction)(void *privdata, dictEntry **bucketref);
 #define dictIsRehashing(d) ((d)->rehashidx != -1)
 
 int dictCheckBucketSize(dict *d);
+dictEntry *dictGetRandomKey2(dict *d);
 
 /* API */
 dict *dictCreate(dictType *type, void *privDataPtr);
